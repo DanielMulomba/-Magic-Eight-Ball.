@@ -4,112 +4,139 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Magic Eight Ball & Guessing Game - Daniel Mulomba</title>
   <meta name="robots" content="noindex, nofollow">
-  <title>Daniel Mulomba - Magic Eight Ball</title>
 
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: radial-gradient(circle at center, #000000 40%, #1b1b1b);
-      color: white;
+      background: linear-gradient(180deg, #0b132b, #1c2541);
+      color: #fff;
       text-align: center;
+      margin: 0;
       padding-top: 60px;
     }
-
     h1 {
-      font-size: 2em;
-      color: #00bfff;
-      text-shadow: 0 0 15px #00bfff;
+      color: #00aaff;
+      margin-bottom: 10px;
     }
-
+    .container {
+      background-color: #162447;
+      padding: 30px;
+      width: 400px;
+      margin: 0 auto;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+    }
     .ball {
-      width: 250px;
-      height: 250px;
-      background: black;
+      background: radial-gradient(circle at 30% 30%, #111, #000);
+      width: 200px;
+      height: 200px;
       border-radius: 50%;
-      margin: 40px auto;
+      margin: 20px auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 4px solid #333;
-      box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
-    }
-
-    .answer {
-      background: #004080;
-      color: white;
+      color: #00ccff;
       font-weight: bold;
-      border-radius: 50%;
-      width: 120px;
-      height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 10px;
-      font-size: 16px;
-      transition: 0.3s ease;
+      border: 3px solid #0077b6;
+      box-shadow: 0 0 20px rgba(0, 204, 255, 0.3);
     }
-
-    footer {
-      margin-top: 50px;
-      color: #aaa;
-      font-size: 14px;
+    button {
+      background-color: #00ccff;
+      color: #001f3f;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #0099cc;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>Welcome to the Magic Eight Ball</h1>
+  <div class="container">
+    <h1>Magic Eight Ball & Guessing Game</h1>
+    <p>Guess the hidden number between 1 and 10!</p>
 
-  <div class="ball">
-    <div class="answer" id="answerBox">Ask me anything...</div>
+    <div class="ball" id="ballWindow">Ask me...</div>
+
+    <button id="askBtn">Start Game</button>
   </div>
 
-  <footer>Type "stop" to quit the game</footer>
-
   <script>
-    // Step 1: Create an array of possible responses
-    let responses = [
-      "Yes, definitely!",
-      "No, not a chance.",
-      "Ask again later.",
-      "It’s possible.",
-      "Absolutely not.",
-      "Without a doubt!",
-      "Signs point to yes.",
-      "I don’t think so."
-    ];
+    // Declare all variables at the top
+    let playerName = "";
+    let randomNumber = 0;
+    let playerChoice = 0;
+    let guessCount = 0;
+    let continueGame = true;
 
-    // Step 2: Initialize game loop
-    let keepPlaying = true;
+    // Access HTML elements (objects)
+    const ball = document.getElementById("ballWindow");
+    const button = document.getElementById("askBtn");
 
-    // Step 3: Start post-test loop
-    do {
-      let question = prompt("Ask the Magic 8 Ball a yes/no question (or type 'stop' to quit):");
+    // Start when button is clicked
+    button.addEventListener("click", function() {
 
-      // Step 4: Stop condition
-      if (question === null || question.toLowerCase() === "stop") {
-        keepPlaying = false;
-        alert("Thanks for playing! Goodbye.");
-      }
+      // Ask player name
+      playerName = prompt("Please enter your name:");
+      if (!playerName) playerName = "Player";
+      alert("Welcome " + playerName + "! Let's begin");
 
-      // Step 5: Empty question
-      else if (question.trim() === "") {
-        alert("Please ask a real question!");
-      }
+      // Main game loop
+      do {
 
-      // Step 6: Random answer
-      else {
-        let randomIndex = Math.floor(Math.random() * responses.length);
-        let answer = responses[randomIndex];
+        // Generate random number (RN)
+        // save RN in a variable
+        randomNumber = Math.floor(Math.random() * 10) + 1;
 
-        document.getElementById("answerBox").innerHTML = answer;
-        alert("The Magic 8 Ball says: " + answer);
-      }
+        // Reset guess counter
+        guessCount = 0;
+        playerChoice = 0;
 
-    } while (keepPlaying);
+        // Prompt user for playerChoice (PC)
+        // save PC in a variable
+        do {
+          playerChoice = prompt(`${playerName}, what is your guess? (1-10)`);
+
+          // User canceled prompt
+          if (playerChoice === null) break;
+
+          // Convert input to number
+          playerChoice = parseInt(playerChoice);
+          guessCount++;
+
+          // Compare PC to RN
+          if (isNaN(playerChoice) || playerChoice < 1 || playerChoice > 10) {
+            alert("Please enter a number between 1 and 10.");
+          } else if (playerChoice < randomNumber) {
+            // if PC < RN { too low try again, increment the counter }
+            alert("Too low! Try again.");
+          } else if (playerChoice > randomNumber) {
+            // if PC > RN { too high try again, increment the counter }
+            alert("Too high! Try again.");
+          } else {
+            // if PC == RN { you win it took n number of times }
+            alert(`🎉 You win, ${playerName}! It took you ${guessCount} tries.`);
+            ball.textContent = `${randomNumber}`;
+          }
+
+        } while (playerChoice !== randomNumber);
+
+        // Ask user if they want to play again
+        continueGame = confirm("Would you like to play again?");
+
+      } while (continueGame);
+
+      alert(`Thanks for playing, ${playerName}! Goodbye`);
+      ball.textContent = "Game Over";
+    });
   </script>
 
 </body>
